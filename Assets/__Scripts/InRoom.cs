@@ -4,6 +4,7 @@ public class InRoom : MonoBehaviour
 {
     static public float ROOM_W = 16;
     static public float ROOM_H = 11;
+    static public float WALL_T = 2;
     static public float WALL = 2;
 
     public bool keepInRoom = true;

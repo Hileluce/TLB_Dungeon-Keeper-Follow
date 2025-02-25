@@ -67,6 +67,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     int lastSafeFacing;
     Collider2D colld;
 
+
     private void Awake()
     {
         S = this;
@@ -125,7 +126,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
                 facing = dirHeld;
                 mode = eMode.move;
             }
-            if (Input.GetKeyDown(keyGadget))
+            if (Input.GetKeyDown(keyGadget) || Input.GetKeyDown(KeyCode.K))
             {
                 if(currentGadget != null)
                 {

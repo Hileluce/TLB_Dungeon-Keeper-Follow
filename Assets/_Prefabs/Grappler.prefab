@@ -307,3 +307,4 @@ MonoBehaviour:
   grappleSpd: 10
   maxLength: 7.25
   minLength: 0.375
+  unsafeTileHealthPenalty: 2

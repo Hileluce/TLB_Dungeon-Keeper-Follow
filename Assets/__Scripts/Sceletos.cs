@@ -11,14 +11,8 @@ public class Sceletos : Enemy, IFaceMover
     public float timeNextDecision = 0;
     private InRoom inRm;
 
-    public bool moving { get { return (facing < 4); } }
-
-    public float gridMult { get { return inRm.gridMult; } }
-
-    public bool isInRoom { get { return inRm.isInRoom; } }
-
-    public Vector2 roomNum { get { return inRm.roomNum; } set { inRm.roomNum = value; } }
-    public Vector2 posInRoom { get { return inRm.posInRoom; } set { inRm.posInRoom = value; } }
+  
+    
     
     protected override void Awake()
     {
@@ -53,4 +47,11 @@ public class Sceletos : Enemy, IFaceMover
     {
         return speed;
     }
+    public Vector2 roomNum { get { return inRm.roomNum; } set { inRm.roomNum = value; } }
+    public Vector2 posInRoom { get { return inRm.posInRoom; } set { inRm.posInRoom = value; } }
+    public bool moving { get { return (facing < 4); } }
+
+    public float gridMult { get { return inRm.gridMult; } }
+
+    public bool isInRoom { get { return inRm.isInRoom; } }
 }

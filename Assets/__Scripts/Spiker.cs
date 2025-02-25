@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-/*
-//[RequireComponent(typeof(DamageEffect))]
-//[RequireComponent(typeof(InRoom))]
-public class Spiker : Enemy {
+
+[RequireComponent(typeof(DamageEffect))]
+[RequireComponent(typeof(InRoom))]
+public class Spiker : MonoBehaviour
+{
     enum eMode { search, attack, retract };
 
     [Header("Set in Inspector")]
@@ -20,45 +21,58 @@ public class Spiker : Enemy {
     private Vector3         p0, p1;
     private DamageEffect    dEf;
 
-    override protected void Start () {
-        base.Start();
-
+    //override protected void Start()
+     void Start()
+    {
+        //base.Start();
         inRm = GetComponent<InRoom>();
 
         GameObject go = GameObject.Find("Dray");
         dray = go.GetComponent<Dray>();
         drayColld = go.GetComponent<SphereCollider>();
         dEf = GetComponent<DamageEffect>();
-        invincible = true;
+        //invincible = true;
     }
 
-    override protected void Update () {
-        switch (mode) {
+    //override protected void Update()
+     void Update()
+    {
+
+        switch (mode)
+        {
             case eMode.search:
                 // Check whether Dray is in the same room
                 if (dray.roomNum != inRm.roomNum) return;
 
                 float moveAmt;
-                if ( Mathf.Abs( dray.roomPos.x - inRm.roomPos.x ) < sensorRange ) {
+                if (Mathf.Abs(dray.posInRoom.x - inRm.posInRoom.x) < sensorRange)
+                {
                     // Attack Vertically
-                    moveAmt = ( InRoom.ROOM_H - (InRoom.WALL_T*2) )/2 - 1;//0.5f;
+                    moveAmt = (InRoom.ROOM_H - (InRoom.WALL_T * 2)) / 2 - 1;//0.5f;
                     // The -0.5f above accounts for radius of Spiker
                     p1 = p0 = transform.position;
-                    if (inRm.roomPos.y < InRoom.ROOM_H/2) {
-                        p1.y += moveAmt; 
-                    } else {
+                    if (inRm.posInRoom.y < InRoom.ROOM_H / 2)
+                    {
+                        p1.y += moveAmt;
+                    }
+                    else
+                    {
                         p1.y -= moveAmt;
                     }
                     mode = eMode.attack;
                 }
 
-                if ( Mathf.Abs( dray.roomPos.y - inRm.roomPos.y ) < sensorRange ) {
+                if (Mathf.Abs(dray.posInRoom.y - inRm.posInRoom.y) < sensorRange)
+                {
                     // Attack Horizontally
-                    moveAmt = ( InRoom.ROOM_W - (InRoom.WALL_T*2) )/2 - 1;//0.5f;
+                    moveAmt = (InRoom.ROOM_W - (InRoom.WALL_T * 2)) / 2 - 1;//0.5f;
                     p1 = p0 = transform.position;
-                    if (inRm.roomPos.x < InRoom.ROOM_W/2) {
-                        p1.x += moveAmt; 
-                    } else {
+                    if (inRm.posInRoom.x < InRoom.ROOM_W / 2)
+                    {
+                        p1.x += moveAmt;
+                    }
+                    else
+                    {
                         p1.x -= moveAmt;
                     }
                     mode = eMode.attack;
@@ -100,4 +114,3 @@ public class Spiker : Enemy {
         }
 	}   
 }
-*/
