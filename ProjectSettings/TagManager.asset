@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 3
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Ground
+  - Enemies
+  - Dray
+  - Items
+  - Grappler
+  - GrapTiles
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Ground
+    uniqueID: 354822929
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Enemies
+    uniqueID: 2822455407
+    locked: 0
+  - name: Grappler
+    uniqueID: 128498571
+    locked: 0
+  - name: Dray
+    uniqueID: 1466479919
+    locked: 0
+  - name: Items
+    uniqueID: 1173599549
+    locked: 0
+  m_RenderingLayers:
+  - Default
