@@ -7,7 +7,7 @@ public class CamFollowDray : MonoBehaviour
     private InRoom inRm;
     private Vector3 p0, p1;
     private float transStart;
-
+    public bool showGizmoz = true;
     private void Awake()
     {
         inRm = GetComponent<InRoom>();
@@ -41,5 +41,16 @@ public class CamFollowDray : MonoBehaviour
         transform.position = p0;
         transStart = Time.time;
         TRANSITIONING = true;
+    }
+    private void OnDrawGizmos()
+    {
+        for (int i = 1; i < 7; i++) 
+        {
+            Gizmos.DrawLine(new Vector3(i*16, 0, 0), new Vector3(i*16, 66, 0)); 
+        }
+        for (int i = 1; i < 7; i++)
+        {
+            Gizmos.DrawLine(new Vector3(0, i*11, 0), new Vector3(96, i*11, 0));
+        }
     }
 }

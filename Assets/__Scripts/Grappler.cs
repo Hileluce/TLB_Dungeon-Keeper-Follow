@@ -110,6 +110,7 @@ public class Grappler : MonoBehaviour, IGadget
     }
     void OnTriggerEnter2D(Collider2D colld)
     {
+        print("grap is work");
         string otherLayer = LayerMask.LayerToName(colld.gameObject.layer);
         switch (otherLayer)
         {
