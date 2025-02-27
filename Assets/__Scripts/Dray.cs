@@ -25,13 +25,29 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     [SerializeField]
     [Range(0, 20)] private int _numKeys = 0;
 
-    public int maxHealth = 10;
+    // maximum for UI hearts in Panel for Grid Layout Group is 20. More of that will brake grid
+    const int highestAmountOfHealth = 20;
+    [SerializeField] int _maxHealth = 8;
+    public int maxHealth
+    {
+        get { return _maxHealth; }
+        set { _maxHealth = Mathf.Min(value, highestAmountOfHealth); } 
+    }
+
     [SerializeField]
-    [Range(0, 10)] private int _health;
+    [Range(0, highestAmountOfHealth)] private int _health;
     public int health 
     {
         get { return _health; }
         set { _health = value; }
+    }
+
+    const int highestArmoredHeart = highestAmountOfHealth / 2;
+    int _armoredHeart = 0;
+    public int armoredHeart
+    {
+        get { return _armoredHeart; }
+        set { _armoredHeart = Mathf.Min(value, highestArmoredHeart); }
     }
 
     public float knockbackSpeed = 10;
@@ -70,6 +86,8 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
 
     private void Awake()
     {
+        maxHealth = 8;
+
         S = this;
         IFM = this;
 
@@ -86,9 +104,11 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     {
         lastSafeLoc = transform.position;
         lastSafeFacing = facing;
+        
     }
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R)) { DrayEvents.RefreshHealthUI.Invoke(); };
         if (isControlled) return;
         if (invincible && Time.time > invincibleDone) invincible = false;
         sRend.color = invincible ? Color.red : Color.white;
@@ -216,7 +236,19 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         if (invincible) return;
         DamageEffect dEf = coll.gameObject.GetComponent<DamageEffect>();
         if (dEf == null) return;
-        health -= dEf.damage;
+
+        //check for protection
+        if ((armoredHeart - dEf.damage)>=0) 
+        { 
+            armoredHeart -= dEf.damage; 
+        }
+        else
+        {
+            health += (armoredHeart - dEf.damage);
+            if (health <= 0) Debug.Log("YOU DEID");
+        }
+
+        DrayEvents.RefreshHealthUI.Invoke();
         invincible = true;
         invincibleDone = Time.time + invincibleDuration;
         if (dEf.knockback)
@@ -253,12 +285,22 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         {
             case PickUp.eType.health:
                 health = Mathf.Min(health + healthPickupAmount, maxHealth);
+                DrayEvents.RefreshHealthUI.Invoke();
                 break;
             case PickUp.eType.key:
                 _numKeys++;
                 break;
             case PickUp.eType.grappler:
                 currentGadget = grappler;
+                break;
+            case PickUp.eType.healthContainer:
+                maxHealth += 2;
+                health = maxHealth;
+                DrayEvents.RefreshHealthUI.Invoke();
+                break;
+            case PickUp.eType.heartArmor:
+                armoredHeart += 1;
+                DrayEvents.RefreshHealthUI.Invoke();
                 break;
             default:
                 Debug.LogError("No case for PickUp type " + pup.itemType);
@@ -291,6 +333,8 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         get { return (Vector2)transform.position; }
     }
     static public int HEALTH { get { return S._health; } }
+    static public int ARMORED_HEALTH { get {  return S.armoredHeart; } }
+    static public int MAX_HEALTH { get { return S.maxHealth; } }    
     static public int NUM_KEYS { get { return S._numKeys; } }
     public void ResetInRoom(int healthLoss = 0)
     {
@@ -336,4 +380,5 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         }
     }
     #endregion
+
 }

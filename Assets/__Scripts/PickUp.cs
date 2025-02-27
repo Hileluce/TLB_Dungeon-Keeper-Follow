@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PickUp : MonoBehaviour, ISwappable
 {
-    public enum eType { none, key, health, grappler }
+    public enum eType { none, key, health, grappler, healthContainer, heartArmor }
     public eType itemType;
 
     Collider2D colld;

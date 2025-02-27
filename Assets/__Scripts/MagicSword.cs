@@ -27,6 +27,5 @@ public class MagicSword : MonoBehaviour
         transform.parent = parent;
         transform.localPosition = posOnStart;
         parent.GetComponent<SwordController>().MagSRet();
-        print("Trig");
     }
 }
