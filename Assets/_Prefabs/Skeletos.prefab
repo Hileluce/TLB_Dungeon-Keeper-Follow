@@ -170,7 +170,7 @@ MonoBehaviour:
   _guaranteedDrop: {fileID: 0}
   speed: 2
   timeThinkMin: 1
-  timeThinkMax: 4
+  timeThinkMax: 2
   facing: 0
   timeNextDecision: 0
 --- !u!114 &6814832064544046836

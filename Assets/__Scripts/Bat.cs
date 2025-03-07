@@ -25,6 +25,7 @@ public class Bat : Enemy, IFaceMover
     // Update is called once per frame
     protected override void Update()
     {
+        if (! (Dray.GET_ROOM_NUM() == inRm.roomNum)) return;
         base.Update();
         if (knockback) return;
         if (Time.time < timeEnd)
@@ -38,10 +39,7 @@ public class Bat : Enemy, IFaceMover
             anim.speed = 0.5f;
             if (!callCor) StartCoroutine(WaitToMove());
         }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            print(inRm.roomNum);
-        }
+       
         
     }
     void CalcPos()

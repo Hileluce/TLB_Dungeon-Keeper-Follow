@@ -7,9 +7,14 @@ public class SwordController : MonoBehaviour
     GameObject magSword;
     Dray dray;
     bool _firingSword;
-    
+
     float endFire;
-    float fireDelay = 0.5f;
+    float attackDuration = 0.5f;
+
+    float startFire;
+    public float delayFire = 0.15f;
+    
+
     public bool firingSword { get { return _firingSword; } set { _firingSword = value; } }
     private void Start()
     {
@@ -36,13 +41,30 @@ public class SwordController : MonoBehaviour
             {
                 if (Time.time > endFire)
                 {
+                    startFire = Time.time + delayFire;
+                    endFire = Time.time + attackDuration;
                     firingSword = true;
-                    magSword.SetActive(true);
-                    endFire = Time.time + fireDelay;
                 }
             }
+            if(firingSword && Time.time > startFire)
+            {
+                magSword.SetActive(true);
+            }
         }
-        sword.SetActive(dray.mode == Dray.eMode.attack);
+            //    if (!wasFire && !firingSword && dray.mode == Dray.eMode.attack)
+            //    {
+            //        wasFire = true;
+            //        startFire = Time.time + delayFire;
+            //        print("has fire if " + Time.time);
+            //    }
+            //}
+            //if(wasFire && !firingSword && Time.time > startFire)
+            //{
+            //    
+            //    wasFire = false;
+            //    print("aaaaaaaand it go in " + Time.time);
+            //}
+            sword.SetActive(dray.mode == Dray.eMode.attack);
     }
     public void MagSRet()
     {

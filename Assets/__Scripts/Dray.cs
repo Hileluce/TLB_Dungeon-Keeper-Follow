@@ -108,6 +108,13 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     }
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            print(inRm.roomNum + " is a roomNum");
+        }
+        //check pause settings
+        if (GameMenu.isGamePaused) return;
+
         if (Input.GetKeyDown(KeyCode.R)) { DrayEvents.RefreshHealthUI.Invoke(); };
         if (isControlled) return;
         if (invincible && Time.time > invincibleDone) invincible = false;
@@ -380,5 +387,8 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         }
     }
     #endregion
-
+    public static Vector2 GET_ROOM_NUM()
+    {
+        return S.inRm.roomNum;
+    }
 }
