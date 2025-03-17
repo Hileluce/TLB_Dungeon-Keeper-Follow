@@ -8,6 +8,8 @@ public class Grappler : MonoBehaviour, IGadget
     public float maxLength = 7.25f;
     public float minLength = 0.375f;
     private eMode _mode = eMode.gIdle;
+    [SerializeField] Sprite _gadgetSprite;
+    public Sprite gadgetSprite { get { return _gadgetSprite; } }
     public eMode mode
     {
         get { return _mode; }
@@ -110,7 +112,6 @@ public class Grappler : MonoBehaviour, IGadget
     }
     void OnTriggerEnter2D(Collider2D colld)
     {
-        print("grap is work");
         string otherLayer = LayerMask.LayerToName(colld.gameObject.layer);
         switch (otherLayer)
         {
@@ -140,6 +141,7 @@ public class Grappler : MonoBehaviour, IGadget
         gadgetDoneCallback(this);
     }
     #region IGadget_Implementation
+    public eGadgetType type = eGadgetType.grappler;
     public bool GadgetUse(Dray tDray, System.Func<IGadget, bool> tCallback)
     {
         if (mode != eMode.gIdle) return false;
@@ -164,5 +166,6 @@ public class Grappler : MonoBehaviour, IGadget
         gameObject.SetActive(false);
         return true;
     }
+    
     #endregion
 }

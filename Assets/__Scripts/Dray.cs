@@ -58,6 +58,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     private float invincibleDone = 0;
     private Vector2 knockbackVel;
     private SpriteRenderer sRend;
+    private Inventory inventory;
     public bool moving     { get { return (mode == eMode.move); } }
 
     public float gridMult  { get { return inRm.gridMult; } }
@@ -75,10 +76,8 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
 
     public KeyCode keyAttack = KeyCode.Z;
     public KeyCode keyGadget = KeyCode.X;
-    [SerializeField] bool startWithGrappler = true;
-
-    Grappler grappler;
-
+    public KeyCode keySwapGadget = KeyCode.I;
+    
     Vector3 lastSafeLoc;
     int lastSafeFacing;
     Collider2D colld;
@@ -96,27 +95,19 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         anim = GetComponent<Animator>();
         inRm = GetComponent<InRoom>();
         health = maxHealth;
-        grappler = GetComponentInChildren<Grappler>();
-        if (startWithGrappler) currentGadget = grappler;
         colld = GetComponent<Collider2D>();
+        inventory = GetComponent<Inventory>();  
     }
     private void Start()
     {
         lastSafeLoc = transform.position;
         lastSafeFacing = facing;
-        
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            print(inRm.roomNum + " is a roomNum");
-        }
-        //check pause settings
-        if (GameMenu.isGamePaused) return;
-
-        if (Input.GetKeyDown(KeyCode.R)) { DrayEvents.RefreshHealthUI.Invoke(); };
+        if (GameMenu.isGamePaused) return; //check pause settings
         if (isControlled) return;
+
         if (invincible && Time.time > invincibleDone) invincible = false;
         sRend.color = invincible ? Color.red : Color.white;
         if(mode == eMode.knockback)
@@ -155,9 +146,9 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
             }
             if (Input.GetKeyDown(keyGadget) || Input.GetKeyDown(KeyCode.K))
             {
-                if(currentGadget != null)
+                if(inventory.currentGadget != null)
                 {
-                    if(currentGadget.GadgetUse(this, GadgetIsDone))
+                    if(inventory.currentGadget.GadgetUse(this, GadgetIsDone))
                     {
                         mode = eMode.gadget;
                         rig.linearVelocity = Vector2.zero;
@@ -169,6 +160,21 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
                 mode = eMode.attack;
                 timeAtkDone = Time.time + attackDuration;
                 timeAtkDone = Time.time + attackDelay; 
+            }
+            if (Input.GetKeyDown(keySwapGadget))
+            {
+                
+                if (inventory.secondGadget == null)
+                {
+                    print("sec gad not exist");
+                    //TO DO blink secondary icon for gadget
+                }
+                else
+                {
+                    inventory.SwapGadgets();
+                    if (inventory.currentGadget != null) print("cur is " + inventory.currentGadget.name);
+                    if (inventory.secondGadget != null) print("sec is " + inventory.secondGadget.name);
+                }
             }
         }
         Vector2 vel = Vector2.zero;
@@ -275,7 +281,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
             rig.linearVelocity = knockbackVel;
             //mode = eMode.knockback;
             //knockbackDone = Time.time + knockbackDuration;
-            if(mode != eMode.gadget || currentGadget.GadgetCancel())
+            if(mode != eMode.gadget || inventory.currentGadget.GadgetCancel())
             {
                 mode = eMode.knockback;
                 knockbackDone = Time.time + knockbackDuration;
@@ -297,8 +303,13 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
             case PickUp.eType.key:
                 _numKeys++;
                 break;
-            case PickUp.eType.grappler:
-                currentGadget = grappler;
+            case PickUp.eType.gadget:
+                if (pup.gadgetLink != null)
+                {
+                    inventory.CurToSecGadget();
+                    inventory.InstantiateAndSetGadget(pup.gadgetLink);
+                }
+                else { Debug.LogError("Link to gadget not exist "); }
                 break;
             case PickUp.eType.healthContainer:
                 maxHealth += 2;
@@ -315,6 +326,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         }
         Destroy(pup.gameObject);   
     }
+    
     public int GetFacing()
     {
         return facing;
@@ -353,17 +365,18 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     }
 
     #region IGadget_Affordances
-    public IGadget currentGadget { get; private set; }
+    
     public bool GadgetIsDone(IGadget gadget)
     {
-        if (gadget != currentGadget)
+        if (gadget != inventory.currentGadget)
         {
-            Debug.LogError("A..... non-current Gadget called GadgetDone" + "\ncurrentGadget: " + currentGadget.name + "\tcalled by: " + gadget.name); 
+            Debug.LogError("A..... non-current Gadget called GadgetDone" + "\ncurrentGadget: " + inventory.currentGadget.name + "\tcalled by: " + gadget.name); 
             
         }
         controlledBy = null;
         physicsEnabled = true;
         mode = eMode.idle;
+        print("gadget turn off");
         return true;
     }
     public IGadget controlledBy { get; set; }
@@ -391,4 +404,5 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     {
         return S.inRm.roomNum;
     }
+    
 }

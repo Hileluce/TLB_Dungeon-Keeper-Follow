@@ -8,6 +8,9 @@ public class GUIpanelV2 : MonoBehaviour
     public Sprite healthHalf;
     public Sprite healthFull;
     public Sprite armoredHeart;
+    public Sprite currentGadget;
+    public Sprite secondGadget;
+
     Text keyCountText;
     List<Image> healthImages;
     int healthBarCount;

@@ -2,9 +2,10 @@ using UnityEngine;
 
 public class PickUp : MonoBehaviour, ISwappable
 {
-    public enum eType { none, key, health, grappler, healthContainer, heartArmor }
+    public enum eType { none, key, health, gadget, healthContainer, heartArmor }
     public eType itemType;
-
+    
+    public GameObject gadgetLink; // items allready in Dray GO, just trigger to activate on  pickup
     Collider2D colld;
     private const float colliderEnableDelay = 0.5f;
     private void Awake()
