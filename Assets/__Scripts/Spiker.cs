@@ -60,6 +60,8 @@ public class Spiker : MonoBehaviour
                         p1.y -= moveAmt;
                     }
                     mode = eMode.attack;
+                    AudioSource.PlayClipAtPoint(AudioManager.GET_GLOBAL_SOUND(2), transform.position);
+
                 }
 
                 if (Mathf.Abs(dray.posInRoom.y - inRm.posInRoom.y) < sensorRange)
@@ -76,6 +78,7 @@ public class Spiker : MonoBehaviour
                         p1.x -= moveAmt;
                     }
                     mode = eMode.attack;
+                    AudioSource.PlayClipAtPoint(AudioManager.GET_GLOBAL_SOUND(2), transform.position);
                 }
                 break;
         }

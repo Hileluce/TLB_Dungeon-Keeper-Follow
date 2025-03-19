@@ -2,12 +2,14 @@ using UnityEngine;
 using System.Collections.Generic;
 public class Enemy : MonoBehaviour, ISwappable
 {
+    [SerializeField] protected AudioClip[] sounds;
     protected static Vector2[] directions = new Vector2[] { Vector2.right, Vector2.up, Vector2.left, Vector2.down, Vector2.zero };
     public float maxHealth = 1;
     public float health;
     protected Animator anim;
     protected Rigidbody2D rigid;
     protected SpriteRenderer sRend;
+    protected AudioSource aSource;
 
     public float knockbackSpeed = 10;
     public float knockbackDuration = 0.25f;
@@ -28,6 +30,7 @@ public class Enemy : MonoBehaviour, ISwappable
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
         sRend = GetComponent<SpriteRenderer>();
+        aSource = GetComponent<AudioSource>();
     }
     protected virtual void Update()
     {
@@ -47,7 +50,12 @@ public class Enemy : MonoBehaviour, ISwappable
         DamageEffect dEf = colld.gameObject.GetComponent<DamageEffect>();
         if (dEf == null) return;
         health -= dEf.damage;
-        if (health <= 0) Die();
+        if (health <= 0) { Die(); return; }
+
+        print(sounds.Length);
+        //Play sound of sword hit
+        PlaySound(1);
+        
         invincible = true;
         invincibleDone = Time.time + invincibleDuration;
         if (dEf.knockback)
@@ -86,6 +94,7 @@ public class Enemy : MonoBehaviour, ISwappable
         {
             go = Instantiate<GameObject>(guaranteedDrop);
             go.transform.position = transform.position;
+            AudioSource.PlayClipAtPoint(AudioManager.GET_GLOBAL_SOUND(0), transform.position, 0.9f);
         }
         else if ( randomItems.Count > 0)
         {
@@ -97,6 +106,8 @@ public class Enemy : MonoBehaviour, ISwappable
                 go.transform.position = transform.position;
             }
         }
+        
+        AudioSource.PlayClipAtPoint(sounds[0], transform.position);
         Destroy(gameObject);
     }
     public GameObject guaranteedDrop
@@ -109,5 +120,11 @@ public class Enemy : MonoBehaviour, ISwappable
     {
         tileNum = fromTileNum;
         transform.position = new Vector3(tileX, tileY, 0) + MapInfo.OFFSET;
+    }
+    void PlaySound(int i)
+    {
+        if (sounds[i] == null) { Debug.LogError("SOUNDS " + i + " DIDNT LINKED"); }
+        aSource.clip = sounds[i];
+        aSource.Play();
     }
 }

@@ -24,6 +24,7 @@ public class MagicSword : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         //gameObject.SetActive(false);
+        AudioSource.PlayClipAtPoint(AudioManager.GET_GLOBAL_SOUND(1), transform.position, 0.9f);
         transform.parent = parent;
         transform.localPosition = posOnStart;
         parent.GetComponent<SwordController>().MagSRet();

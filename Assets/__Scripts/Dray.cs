@@ -59,6 +59,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     private Vector2 knockbackVel;
     private SpriteRenderer sRend;
     private Inventory inventory;
+    private DrayAudio audioDray;
     public bool moving     { get { return (mode == eMode.move); } }
 
     public float gridMult  { get { return inRm.gridMult; } }
@@ -81,7 +82,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     Vector3 lastSafeLoc;
     int lastSafeFacing;
     Collider2D colld;
-
+    GameObject walkingSound;
 
     private void Awake()
     {
@@ -96,7 +97,9 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         inRm = GetComponent<InRoom>();
         health = maxHealth;
         colld = GetComponent<Collider2D>();
-        inventory = GetComponent<Inventory>();  
+        inventory = GetComponent<Inventory>();
+        audioDray = GetComponent<DrayAudio>();
+        walkingSound = transform.Find("Walking").gameObject;
     }
     private void Start()
     {
@@ -107,6 +110,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     {
         if (GameMenu.isGamePaused) return; //check pause settings
         if (isControlled) return;
+        if(mode == eMode.move ) { walkingSound.SetActive(true); } else { walkingSound.SetActive(false); }
 
         if (invincible && Time.time > invincibleDone) invincible = false;
         sRend.color = invincible ? Color.red : Color.white;
@@ -143,6 +147,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
             {
                 facing = dirHeld;
                 mode = eMode.move;
+                //audioDray.PlaySound(0);
             }
             if (Input.GetKeyDown(keyGadget) || Input.GetKeyDown(KeyCode.K))
             {
@@ -159,7 +164,8 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
             {
                 mode = eMode.attack;
                 timeAtkDone = Time.time + attackDuration;
-                timeAtkDone = Time.time + attackDelay; 
+                timeAtkDone = Time.time + attackDelay;
+                audioDray.PlaySound(0, true);
             }
             if (Input.GetKeyDown(keySwapGadget))
             {
@@ -260,6 +266,8 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
             health += (armoredHeart - dEf.damage);
             if (health <= 0) Debug.Log("YOU DEID");
         }
+        //play sound of hit with random pitch
+        audioDray.PlaySound(1, rand: true, pLow:0.8f, pHigh:1.15f);
 
         DrayEvents.RefreshHealthUI.Invoke();
         invincible = true;
@@ -279,8 +287,6 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
             }
             knockbackVel = delta * knockbackSpeed;
             rig.linearVelocity = knockbackVel;
-            //mode = eMode.knockback;
-            //knockbackDone = Time.time + knockbackDuration;
             if(mode != eMode.gadget || inventory.currentGadget.GadgetCancel())
             {
                 mode = eMode.knockback;
@@ -324,6 +330,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
                 Debug.LogError("No case for PickUp type " + pup.itemType);
                 break;
         }
+        audioDray.PlaySound(0);
         Destroy(pup.gameObject);   
     }
     
@@ -368,15 +375,14 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     
     public bool GadgetIsDone(IGadget gadget)
     {
-        if (gadget != inventory.currentGadget)
-        {
-            Debug.LogError("A..... non-current Gadget called GadgetDone" + "\ncurrentGadget: " + inventory.currentGadget.name + "\tcalled by: " + gadget.name); 
+        //if (gadget != inventory.currentGadget)
+        //{
+        //    Debug.LogError("A..... non-current Gadget called GadgetDone" + "\ncurrentGadget: " + inventory.currentGadget.name + "\tcalled by: " + gadget.name); 
             
-        }
+        //}
         controlledBy = null;
         physicsEnabled = true;
         mode = eMode.idle;
-        print("gadget turn off");
         return true;
     }
     public IGadget controlledBy { get; set; }

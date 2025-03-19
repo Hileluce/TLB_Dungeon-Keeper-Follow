@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
 using UnityEngine;
-
+[RequireComponent(typeof(AudioSource))]
 public class Bomb : MonoBehaviour, IGadget
 {
+    [SerializeField] AudioClip[] sounds;
+
+    AudioSource aSource;
     public float animationTime = 0.15f;
     public float timer = 1f;
     public float boomAnim = 0.5f;
@@ -23,6 +26,7 @@ public class Bomb : MonoBehaviour, IGadget
     }
     private void Start()
     {
+        aSource = GetComponent<AudioSource>();
         gameObject.SetActive(false);
     }
     public bool GadgetUse(Dray tDray, Func<IGadget, bool> tDoneCallback)
@@ -41,16 +45,25 @@ public class Bomb : MonoBehaviour, IGadget
         bombPlaced = true;
         bomb = Instantiate<GameObject>(bombPref);
         bomb.transform.position = posOfExplo;
+        PlaySound(0);
         yield return new WaitForSeconds(animationTime);
         gadgetDoneCallback(this);
+        PlaySound(1);
         yield return new WaitForSeconds(timer - animationTime);
         posOfExplo = bomb.transform.position;
         Destroy(bomb);
         bomb = Instantiate<GameObject>(boomPref);
         bomb.transform.position = posOfExplo;
+        PlaySound(2);
         yield return new WaitForSeconds(boomAnim);
         Destroy(bomb);
         bombPlaced = false;
+        aSource.Stop();
+    }
+    void PlaySound(int i)
+    {
+        aSource.clip = sounds[i];
+        aSource.Play();
     }
     IEnumerator WaitAnim()
     {

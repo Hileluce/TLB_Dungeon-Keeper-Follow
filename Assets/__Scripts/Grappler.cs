@@ -1,8 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 [RequireComponent(typeof(LineRenderer))]
+[RequireComponent(typeof(AudioSource))]
 public class Grappler : MonoBehaviour, IGadget
 {
+    [SerializeField] AudioClip[] sounds;
+
     public enum eMode { gIdle, gOut, gRetract, gPull }
     public float grappleSpd = 10;
     public float maxLength = 7.25f;
@@ -18,12 +21,14 @@ public class Grappler : MonoBehaviour, IGadget
     private LineRenderer line;
     Rigidbody2D rigid;
     Collider2D colld;
+    AudioSource aSource;
     Vector3 p0, p1;
     int facing;
     Dray dray;
     System.Func<IGadget, bool> gadgetDoneCallback;
 
     public int unsafeTileHealthPenalty = 2;
+
     
     Vector2[] directions = new Vector2[]
     {
@@ -34,9 +39,11 @@ public class Grappler : MonoBehaviour, IGadget
         line = GetComponent<LineRenderer>();
         rigid = GetComponent<Rigidbody2D>();
         colld = GetComponent<Collider2D>();
+        aSource = GetComponent<AudioSource>();
     }
     private void Start()
     {
+        
         gameObject.SetActive(false);
     }
     void SetGrappleMode(eMode newMode)
@@ -121,14 +128,17 @@ public class Grappler : MonoBehaviour, IGadget
                 pup.transform.SetParent(transform);
                 pup.transform.localPosition = Vector3.zero;
                 SetGrappleMode(eMode.gRetract);
+                PlaySound(3);
                 break;
             case "Enemies":
                 Enemy e = colld.GetComponent<Enemy>();
-                if (e != null) SetGrappleMode(eMode.gRetract);
+                if (e != null) { PlaySound(2); SetGrappleMode(eMode.gRetract);  }
                 break;
             case "GrapTiles":
                 //SetGrappleMode(eMode.gRetract);
+                PlaySound(1);
                 SetGrappleMode(eMode.gPull);
+                
                 break;
             default:
                 SetGrappleMode(eMode.gRetract);
@@ -157,6 +167,7 @@ public class Grappler : MonoBehaviour, IGadget
         line.SetPosition(0, p0);
         line.SetPosition(1, p1);
         SetGrappleMode(eMode.gOut);
+        PlaySound(0);
         return true;
     }
     public bool GadgetCancel()
@@ -166,6 +177,11 @@ public class Grappler : MonoBehaviour, IGadget
         gameObject.SetActive(false);
         return true;
     }
-    
+
     #endregion
+    void PlaySound(int i)
+    {
+        aSource.clip = sounds[i];
+        aSource.Play();
+    }
 }
