@@ -52,8 +52,7 @@ public class Enemy : MonoBehaviour, ISwappable
         health -= dEf.damage;
         if (health <= 0) { Die(); return; }
 
-        print(sounds.Length);
-        //Play sound of sword hit
+       //Play sound of sword hit
         PlaySound(1);
         
         invincible = true;

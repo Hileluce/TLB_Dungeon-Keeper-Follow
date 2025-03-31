@@ -33,6 +33,12 @@ public class Inventory : MonoBehaviour
         SetCurGadgetIcon();
         
     }
+    public void SetSecondGadget(IGadget gadget)
+    {
+        if (gadget == null) return;
+        secondGadget = gadget;
+        SetSecGadgetIcon();
+    }
     public void SetCurGadgetIcon() 
     { 
         curRend.sprite = currentGadget.gadgetSprite; 
@@ -78,7 +84,7 @@ public class Inventory : MonoBehaviour
         IGadget iGgo = GO.GetComponent<IGadget>();
         Inventory.gadgets.Add(iGgo);
         SetGadget(iGgo);
-        
+        UI_Behaiver.InstallGadgetInCell(GO);
     }
 
 }
