@@ -636,7 +636,9 @@ MonoBehaviour:
   roomTransDelay: 0.5
   healthPickupAmount: 2
   keyAttack: 122
+  keyMainAttack: 107
   keyGadget: 120
+  keyMainGadget: 106
   keySwapGadget: 105
   _physicsEnabled: 1
 --- !u!58 &1177620431285894926

@@ -10,6 +10,7 @@ public class ItemButton : MonoBehaviour
     }
     public IGadget GiveIGadget()
     {
+        if (gadget == null) { return null; }
         return gadget.GetComponent<IGadget>();
 
     }

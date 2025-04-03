@@ -41,6 +41,8 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         get { return _health; }
         set { _health = value; }
     }
+    bool _alive = true;
+    public bool alive { get { return _alive; }  set { _alive = value; } }
 
     const int highestArmoredHeart = highestAmountOfHealth / 2;
     int _armoredHeart = 0;
@@ -76,7 +78,9 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     public int healthPickupAmount = 2;
 
     public KeyCode keyAttack = KeyCode.Z;
+    public KeyCode keyMainAttack = KeyCode.K;
     public KeyCode keyGadget = KeyCode.X;
+    public KeyCode keyMainGadget = KeyCode.J;
     public KeyCode keySwapGadget = KeyCode.I;
     
     Vector3 lastSafeLoc;
@@ -110,6 +114,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     {
         if (GameMenu.isGamePaused) return; //check pause settings
         if (isControlled) return;
+        if (!alive) return;
         if(mode == eMode.move ) { walkingSound.SetActive(true); } else { walkingSound.SetActive(false); }
 
         if (invincible && Time.time > invincibleDone) invincible = false;
@@ -149,7 +154,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
                 mode = eMode.move;
                 //audioDray.PlaySound(0);
             }
-            if (Input.GetKeyDown(keyGadget) || Input.GetKeyDown(KeyCode.K))
+            if (Input.GetKeyDown(keyGadget) || Input.GetKeyDown(keyMainGadget))
             {
                 if(inventory.currentGadget != null)
                 {
@@ -160,7 +165,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
                     }
                 }
             }
-            if((Input.GetKeyDown(keyAttack) || Input.GetKeyDown(KeyCode.J)) && Time.time >= timeAtkNext)
+            if((Input.GetKeyDown(keyAttack) || Input.GetKeyDown(keyMainAttack)) && Time.time >= timeAtkNext)
             {
                 mode = eMode.attack;
                 timeAtkDone = Time.time + attackDuration;
@@ -178,8 +183,6 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
                 else
                 {
                     inventory.SwapGadgets();
-                    if (inventory.currentGadget != null) print("cur is " + inventory.currentGadget.name);
-                    if (inventory.secondGadget != null) print("sec is " + inventory.secondGadget.name);
                 }
             }
         }
@@ -209,7 +212,6 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     void LateUpdate()
     {
         if (isControlled) return;
-        //print("W");
         Vector2 gridPosIR = GetGridPosInRoom(0.25f);
         int doorNum;
         for (doorNum =0; doorNum < 4; doorNum++)
@@ -264,7 +266,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         else
         {
             health += (armoredHeart - dEf.damage);
-            if (health <= 0) Debug.Log("YOU DEID");
+            if (health <= 0) { alive = false; DrayEvents.DrayDeath.Invoke(); }
         }
         //play sound of hit with random pitch
         audioDray.PlaySound(1, rand: true, pLow:0.8f, pHigh:1.15f);
@@ -326,6 +328,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
                 armoredHeart += 1;
                 DrayEvents.RefreshHealthUI.Invoke();
                 break;
+             
             default:
                 Debug.LogError("No case for PickUp type " + pup.itemType);
                 break;

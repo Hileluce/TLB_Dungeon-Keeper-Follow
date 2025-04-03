@@ -11,17 +11,14 @@ public class AudioManager : MonoBehaviour
     {
         if (S == null) S = this;
     }
-
-    // Update is called once per frame
-    void Update()
+    public void SoundValue(float val) 
     {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            print("Q");
-            muteSound = !muteSound;
-        }
+        AudioListener.volume = val;
     }
-
+        public void MuteAllSound()
+    {
+        muteSound = !muteSound;
+    }
     public bool muteSound
     {
         get { return AudioListener.pause; }

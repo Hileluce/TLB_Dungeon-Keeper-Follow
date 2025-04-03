@@ -67,17 +67,7 @@ public class Inventory : MonoBehaviour
         secondGadget = currentGadget;
         SetSecGadgetIcon();
     }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Y)) 
-        {
-            secRend.sprite = secondGadget.gadgetSprite;
-        }
-        if (Input.GetKeyDown(KeyCode.T)) 
-        {
-            curRend.sprite = currentGadget.gadgetSprite;
-        }
-    }
+    
     public void InstantiateAndSetGadget(GameObject gadget)
     {
         GameObject GO = Instantiate<GameObject>(gadget, dray.transform);

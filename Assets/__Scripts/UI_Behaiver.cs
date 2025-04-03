@@ -27,13 +27,12 @@ public class UI_Behaiver : MonoBehaviour
         for(int i = 0; i < inventoryCell.Length; i++)
         {
             inventoryImages[i] = inventoryCell[i].GetComponent<Image>();
+            //make button unselectable
+            inventoryCell[i].GetComponent<Button>().enabled = false;
         }
-        inventoryImages = new Image[inventoryCell.Length];
-        for (int i = 0; i < inventoryCell.Length; i++)
-        {
-            inventoryImages[i] = inventoryCell[i].GetComponent<Image>();
-        }
+        
     }
+    
 
     // Update is called once per frame
     void Update()
@@ -42,6 +41,7 @@ public class UI_Behaiver : MonoBehaviour
         {
             ReturnHighPanel();
         }
+        
     }
     private void OnEnable()
     {
@@ -55,8 +55,6 @@ public class UI_Behaiver : MonoBehaviour
     public void ReturnHighPanel()
     {
         highPanel.SetActive(true);
-        if (cEvS == null) print("EvSyst is null");
-        if (selectedButtonOnEnable == null) print("button is null");
         cEvS.SetSelectedGameObject(selectedButtonOnEnable);
         dropDownPanel.SetActive(false);
         //spriteOfIcon = null
@@ -74,14 +72,17 @@ public class UI_Behaiver : MonoBehaviour
     public void SetCurrentGadget()
     {
         if (tempGOforGadget == null) Debug.LogError("tempGOgadget not defined");
-        inventory.SetGadget(tempGOforGadget.GetComponent<ItemButton>().GiveIGadget());
+        IGadget gadg = tempGOforGadget.GetComponent<ItemButton>().GiveIGadget();
+        if (gadg == null) return;
+        inventory.SetGadget(gadg);
         tempGOforGadget = null;
     }
     public void SetSecondGadget()
     {
         if (tempGOforGadget == null) Debug.LogError("tempGOgadget not defined");
-        if (tempGOforGadget.GetComponent<ItemButton>() == null) print("ti log");
-        inventory.SetSecondGadget(tempGOforGadget.GetComponent<ItemButton>().GiveIGadget());
+        IGadget gadg = tempGOforGadget.GetComponent<ItemButton>().GiveIGadget();
+        if (gadg == null) return;
+        inventory.SetSecondGadget(gadg);
         tempGOforGadget = null;
     }
     public static void InstallGadgetInCell(GameObject go)
@@ -92,6 +93,8 @@ public class UI_Behaiver : MonoBehaviour
             {
                 image.sprite = go.GetComponent<IGadget>().gadgetSprite;
                 image.gameObject.GetComponent<ItemButton>().SetGadget(go);
+                //TO DO set button selectable
+                image.gameObject.GetComponent<Button>().enabled = true;
                 return;
             }
         }
