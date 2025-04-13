@@ -18,21 +18,25 @@ public class UI_Behaiver : MonoBehaviour
     public IGadget[] invGadgetsLinks;
     GameObject tempGOforGadget;
     public Inventory inventory;
+    public bool wasInit = false;
 
     void Awake()
     {
         if (S == null) S = this;
         cEvS = EventSystem.current;
         inventoryImages = new Image[inventoryCell.Length];
-        for(int i = 0; i < inventoryCell.Length; i++)
+        for (int i = 0; i < inventoryCell.Length; i++)
         {
             inventoryImages[i] = inventoryCell[i].GetComponent<Image>();
             //make button unselectable
             inventoryCell[i].GetComponent<Button>().enabled = false;
         }
+        wasInit = true;
+    }
+    public void Init()
+    {
         
     }
-    
 
     // Update is called once per frame
     void Update()
@@ -54,6 +58,7 @@ public class UI_Behaiver : MonoBehaviour
     }
     public void ReturnHighPanel()
     {
+        if (!wasInit) return;
         highPanel.SetActive(true);
         cEvS.SetSelectedGameObject(selectedButtonOnEnable);
         dropDownPanel.SetActive(false);

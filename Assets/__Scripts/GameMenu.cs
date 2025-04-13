@@ -9,6 +9,7 @@ public class GameMenu : MonoBehaviour
     public GameObject panel;
     public static bool isGamePaused;
     public GameObject fadingImage;
+    public GameObject mainCanvas;
     Color faidingColor;
     public Sprite toBeCont;
     public Sprite gameOver;
@@ -21,6 +22,11 @@ public class GameMenu : MonoBehaviour
         faidingColor = fadingImage.GetComponent<Image>().color;
         DrayEvents.DrayDeath.AddListener(DrayDie);
     }
+    public void Init()
+    {
+        
+    }
+    
 
     // Update is called once per frame
     void Update()

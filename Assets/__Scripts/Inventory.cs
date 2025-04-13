@@ -13,7 +13,6 @@ public class Inventory : MonoBehaviour
     public GameObject secIcon;
     SpriteRenderer curRend;
     SpriteRenderer secRend;
-    //public GameObject fi;
     private void Awake()
     {
         if (S == null) S = this;

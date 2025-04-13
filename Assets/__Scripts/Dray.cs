@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
 {
@@ -88,6 +89,8 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
     Collider2D colld;
     GameObject walkingSound;
 
+    bool changingDirect;
+
     private void Awake()
     {
         maxHealth = 8;
@@ -104,6 +107,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         inventory = GetComponent<Inventory>();
         audioDray = GetComponent<DrayAudio>();
         walkingSound = transform.Find("Walking").gameObject;
+        changingDirect = false;
     }
     private void Start()
     {
@@ -136,13 +140,33 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         if(mode == eMode.attack && Time.time >= timeAtkDone)
         {
             mode = eMode.idle;
+            if(!Input.GetKeyDown(keyMainAttack))
+            {
+                changingDirect = false;
+            }
         }
         if(mode == eMode.idle || mode == eMode.move)
         {
             dirHeld = -1;
+            if (Input.GetKey(keyMainAttack) && mode == eMode.idle)
+            {
+                changingDirect = true;
+                //changing direction without moving
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    if (Input.GetKey(keys[i]))
+                    {
+                        facing = i % 4;
+                    }
+                }
+                
+            }
+            if(changingDirect && Input.GetKeyUp(keyMainAttack)) { changingDirect = false; }
+
+
             for (int i = 0; i < keys.Length; i++)
             {
-                if (Input.GetKey(keys[i])) dirHeld = i % 4;
+                if (!changingDirect && Input.GetKey(keys[i])) dirHeld = i % 4;
             }
             if (dirHeld == -1)
             {
@@ -169,9 +193,11 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
             {
                 mode = eMode.attack;
                 timeAtkDone = Time.time + attackDuration;
-                timeAtkDone = Time.time + attackDelay;
+                timeAtkNext = Time.time + attackDelay;
                 audioDray.PlaySound(0, true);
+                
             }
+            
             if (Input.GetKeyDown(keySwapGadget))
             {
                 
