@@ -21,6 +21,9 @@ public class MapInfo : MonoBehaviour
         Debug.Log("COLLISIONS contains " + COLLISIONS.Length + " chars");
         GRAP_TILES = Utils.RemoveLineEndings(delverGrapTiles.text);
         Debug.Log("GRAP_TILES contains " + GRAP_TILES.Length + " chars");
+        Debug.Log("**********************************");
+        Debug.Log("**********************************");
+        Debug.Log("**********************************");
     }
     void LoadMap()
     {

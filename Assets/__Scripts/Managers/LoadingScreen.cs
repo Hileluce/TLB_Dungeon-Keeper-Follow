@@ -21,7 +21,7 @@ public class LoadingScreen : MonoBehaviour
         if(!memeWasShown) 
         {
             memeSettingImage.SetActive(true);
-            Invoke("DisableMemeImage", 0.5f);
+            Invoke("DisableMemeImage", 0.6f);
             memeWasShown = true;
         }
         else

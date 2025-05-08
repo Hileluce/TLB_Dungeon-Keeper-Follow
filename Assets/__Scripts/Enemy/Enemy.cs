@@ -24,6 +24,9 @@ public class Enemy : MonoBehaviour, ISwappable
     public List<GameObject> randomItems;
 
     [SerializeField] GameObject _guaranteedDrop = null;
+
+    public bool haveRemains = false;
+    public GameObject remainsGO;
     protected virtual void Awake()
     {
         health = maxHealth;
@@ -107,6 +110,14 @@ public class Enemy : MonoBehaviour, ISwappable
         }
         
         AudioSource.PlayClipAtPoint(sounds[0], transform.position);
+        
+        if(haveRemains)
+        {
+            if (remainsGO == null) { Debug.LogWarning("remains dont SET on " + gameObject.name); }
+            
+            GameObject goRem = Instantiate<GameObject>(remainsGO);
+            goRem.transform.position = transform.position;
+        }
         Destroy(gameObject);
     }
     public GameObject guaranteedDrop

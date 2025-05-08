@@ -149,6 +149,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 2
   knockback: 1
+  effect: 0
+  type: 1
+  effectPower: 0
+  effectTime: 0
 --- !u!1 &2318956312960449837
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,6 +306,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 2
   knockback: 1
+  effect: 0
+  type: 1
+  effectPower: 0
+  effectTime: 0
 --- !u!50 &2299250837557599080
 Rigidbody2D:
   serializedVersion: 5
@@ -480,6 +488,7 @@ GameObject:
   - component: {fileID: 2156016642305583479}
   - component: {fileID: 7383687590431505289}
   - component: {fileID: 6384344362570022196}
+  - component: {fileID: 2179020088666415751}
   m_Layer: 8
   m_Name: Dray
   m_TagString: Untagged
@@ -621,25 +630,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  dirHeld: -1
   attackDuration: 0.25
   attackDelay: 0.5
-  facing: 1
-  mode: 0
-  _numKeys: 0
   _maxHealth: 8
   _health: 0
+  healthPickupAmount: 2
   knockbackSpeed: 10
   knockbackDuration: 0.25
   invincibleDuration: 0.25
-  invincible: 0
-  roomTransDelay: 0.5
-  healthPickupAmount: 2
+  dirHeld: -1
+  facing: 1
+  mode: 0
+  _numKeys: 0
   keyAttack: 122
   keyMainAttack: 107
   keyGadget: 120
   keyMainGadget: 106
   keySwapGadget: 105
+  invincible: 0
+  roomTransDelay: 0.5
   _physicsEnabled: 1
 --- !u!58 &1177620431285894926
 CircleCollider2D:
@@ -846,6 +855,18 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 749749fe4f3894c4cb3e1c6a115f8ac6, type: 3}
   clips:
   - {fileID: 8300000, guid: bec0d01ab20ed1842a5abe756862f03c, type: 3}
+--- !u!114 &2179020088666415751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2614714308669890927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af8443eaa76bdcc499b1a90e3ee7b60f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3409267578987342728
 GameObject:
   m_ObjectHideFlags: 0

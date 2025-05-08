@@ -241,6 +241,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   knockback: 0
+  effect: 0
+  type: 1
+  effectPower: 0
+  effectTime: 0
 --- !u!60 &2136795871438395507
 PolygonCollider2D:
   m_ObjectHideFlags: 0

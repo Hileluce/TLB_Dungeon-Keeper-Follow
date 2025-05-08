@@ -1,96 +1,90 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
+public class Dray : MonoBehaviour, IFaceMover, IKeyMaster, IModifier
 {
+    // ---------------------*******__COMPONNENTS__******-------------------
     static private Dray S;
+    static public IFaceMover IFM;
     Rigidbody2D rig;
-    public float speed = 5;
-    public int dirHeld = -1;
-    Vector2[] dir = new Vector2[] { Vector2.right, Vector2.up, Vector2.left, Vector2.down };
-    KeyCode[] keys = new KeyCode[] { KeyCode.RightArrow, KeyCode.UpArrow, KeyCode.LeftArrow, KeyCode.DownArrow, KeyCode.D, KeyCode.W, KeyCode.A, KeyCode.S };
     Animator anim;
+    private SpriteRenderer sRend;
+    private Inventory inventory;
+    private DrayAudio audioDray;
+    private InRoom inRm;
+    Collider2D colld;
 
-    public enum eMode { idle, move, attack, roomTrans, knockback, gadget }
+    // ---------------------*******__STATS__*********-------------------
+    public float speed = 5;
     public float attackDuration = 0.25f;
     public float attackDelay = 0.5f;
-    public int facing = 1;
-    public eMode mode = eMode.idle;
     private float timeAtkDone = 0;
     float timeAtkNext = 0;
-
-    private InRoom inRm;
-
-    static public IFaceMover IFM;
-
-    [SerializeField]
-    [Range(0, 20)] private int _numKeys = 0;
-
-    // maximum for UI hearts in Panel for Grid Layout Group is 20. More of that will brake grid
     const int highestAmountOfHealth = 20;
-    [SerializeField] int _maxHealth = 8;
+    [SerializeField] // maximum for UI hearts in Panel for Grid Layout Group is 20. More of that will brake grid
+    int _maxHealth = 8;
     public int maxHealth
-    {
-        get { return _maxHealth; }
-        set { _maxHealth = Mathf.Min(value, highestAmountOfHealth); } 
-    }
-
-    [SerializeField]
-    [Range(0, highestAmountOfHealth)] private int _health;
-    public int health 
-    {
-        get { return _health; }
-        set { _health = value; }
-    }
-    bool _alive = true;
-    public bool alive { get { return _alive; }  set { _alive = value; } }
+        {   get { return _maxHealth; }    set { _maxHealth = Mathf.Min(value, highestAmountOfHealth); }}
+    [SerializeField] [Range(0, highestAmountOfHealth)] 
+    private int _health;
+    public int health
+        {   get { return _health; }       set { _health = value; } }
 
     const int highestArmoredHeart = highestAmountOfHealth / 2;
     int _armoredHeart = 0;
     public int armoredHeart
-    {
-        get { return _armoredHeart; }
-        set { _armoredHeart = Mathf.Min(value, highestArmoredHeart); }
-    }
-
+    { get { return _armoredHeart; } set { _armoredHeart = Mathf.Min(value, highestArmoredHeart); } }
+    public int healthPickupAmount = 2;
     public float knockbackSpeed = 10;
     public float knockbackDuration = 0.25f;
     public float invincibleDuration = 0.25f;
-    public bool invincible = false;
-    private float knockbackDone = 0;
-    private float invincibleDone = 0;
-    private Vector2 knockbackVel;
-    private SpriteRenderer sRend;
-    private Inventory inventory;
-    private DrayAudio audioDray;
-    public bool moving     { get { return (mode == eMode.move); } }
 
-    public float gridMult  { get { return inRm.gridMult; } }
 
-    public bool isInRoom   { get { return inRm.isInRoom; } }
+    // ---------------------*******__MODS__*********-------------------
+    float _moveSpeedMod = 1;
+    public float moveSpeedMod { set { _moveSpeedMod = Mathf.Clamp(value, 0.2f, 1.4f); } get { return _moveSpeedMod; } }
 
-    public Vector2 roomNum { get { return inRm.roomNum; } set { inRm.roomNum = value; } }
-    public Vector2 posInRoom { get { return inRm.posInRoom; } set { inRm.posInRoom = value; } }
-
-    public float roomTransDelay = 0.5f;
-    private float roomTransDone = 0;
-    Vector2 roomTransPos;
-
-    public int healthPickupAmount = 2;
-
+    // ---------------------*******__CONTROL__**********-------------------
+    public int dirHeld = -1;
+    Vector2[] dir = new Vector2[] { Vector2.right, Vector2.up, Vector2.left, Vector2.down };
+    KeyCode[] keys = new KeyCode[] { KeyCode.RightArrow, KeyCode.UpArrow, KeyCode.LeftArrow, KeyCode.DownArrow, KeyCode.D, KeyCode.W, KeyCode.A, KeyCode.S };
+    public enum eMode { idle, move, attack, roomTrans, knockback, gadget }
+    public bool moving { get { return (mode == eMode.move); } }
+    public int facing = 1;
+    public eMode mode = eMode.idle;
+        [SerializeField] [Range(0, 20)] 
+    private int _numKeys = 0;
     public KeyCode keyAttack = KeyCode.Z;
     public KeyCode keyMainAttack = KeyCode.K;
     public KeyCode keyGadget = KeyCode.X;
     public KeyCode keyMainGadget = KeyCode.J;
     public KeyCode keySwapGadget = KeyCode.I;
-    
-    Vector3 lastSafeLoc;
-    int lastSafeFacing;
-    Collider2D colld;
+
+    // ---------------------*******__INFO__**********-------------------
+    bool _alive = true;
+    public bool alive { get { return _alive; }  set { _alive = value; } }
+    public bool invincible = false;
+    private float knockbackDone = 0;
+    private float invincibleDone = 0;
+    private Vector2 knockbackVel;
+   
+     // ---------------------*******__SOUNDS__**********-------------------
     GameObject walkingSound;
 
+    // ---------------------*******__MAP__**********-------------------
+    public float roomTransDelay = 0.5f;
+    private float roomTransDone = 0;
+    Vector3 lastSafeLoc;
+    int lastSafeFacing;
+    public float gridMult { get { return inRm.gridMult; } }
+    public bool isInRoom { get { return inRm.isInRoom; } }
+    public Vector2 roomNum { get { return inRm.roomNum; } set { inRm.roomNum = value; } }
+    public Vector2 posInRoom { get { return inRm.posInRoom; } set { inRm.posInRoom = value; } }
+    Vector2 roomTransPos;
     bool changingDirect;
 
+    // ---------------------*******__CODE__**********-------------------
+    // ---------------------*******__CODE__**********-------------------
     private void Awake()
     {
         maxHealth = 8;
@@ -114,11 +108,13 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         lastSafeLoc = transform.position;
         lastSafeFacing = facing;
     }
+   
     private void Update()
     {
         if (GameMenu.isGamePaused) return; //check pause settings
         if (isControlled) return;
         if (!alive) return;
+        
         if(mode == eMode.move ) { walkingSound.SetActive(true); } else { walkingSound.SetActive(false); }
 
         if (invincible && Time.time > invincibleDone) invincible = false;
@@ -233,7 +229,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
                 anim.speed = 0;
                 break;
         }
-        rig.linearVelocity = vel * speed;
+        rig.linearVelocity = vel * speed * moveSpeedMod;
     }
     void LateUpdate()
     {
@@ -321,6 +317,9 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
                 knockbackDone = Time.time + knockbackDuration;
             }
         }
+        changingDirect = false;
+        // experimental 
+        //if(Input.GetKey(keyMainAttack){ changingDirect = false;}
 
     }
     void OnTriggerEnter2D(Collider2D colld)
@@ -398,6 +397,7 @@ public class Dray : MonoBehaviour, IFaceMover, IKeyMaster
         health -= healthLoss;
         invincible = true;
         invincibleDone = Time.time + invincibleDuration;
+        DrayEvents.RefreshHealthUI.Invoke();
     }
 
     #region IGadget_Affordances
